@@ -14,6 +14,7 @@ namespace CP_AI_Monitor
     {
         //private static readonly string LogFilePath = $@"C:\Program Files\CodeProject\AI\logs\log-{DateTime.Today:yyyy-MM-dd}.txt";
         private static string LogFilePath = string.Empty;
+        private static string LogFileDir = string.Empty;
         private const string ServiceName = "CodeProject.AI Server";
         private const string ErrorString = "Exception";
         private const int ServiceRestartDelay = 30 * 1000; // 30 seconds in milliseconds
@@ -136,7 +137,7 @@ namespace CP_AI_Monitor
                 {
                     string line;
                     int lineCount = 0;
-                    while ((line = streamReader.ReadLine()) != null)
+                    while ((line = streamReader.ReadLine() ?? string.Empty) != string.Empty)
                     {
                         if (lineCount > lastProcessedLine && line.Contains(ErrorString))
                         {
@@ -227,7 +228,9 @@ namespace CP_AI_Monitor
         private void UpdateLogFileDisplay()
         {
             textBoxLogFile.Text = LogFilePath;
-            bool logFileExists = File.Exists(LogFilePath);
+            textBoxLogDir.Text = LogFileDir;
+
+        bool logFileExists = File.Exists(LogFilePath);
             lblLogFileExists.Text = $"Log File Exists: {logFileExists}";
         }
 
@@ -298,10 +301,10 @@ namespace CP_AI_Monitor
                     string[] configLines = File.ReadAllLines("config.cfg");
                     foreach (string line in configLines)
                     {
-                        if (line.StartsWith("LogFile="))
+                        if (line.StartsWith("LogDirectory="))
                         {
-                            LogFilePath = line.Substring("LogFile=".Length);
-                            LogFilePath = string.Format(LogFilePath, DateTime.Today);
+                            LogFileDir = line.Substring("LogDirectory=".Length);
+                            LogFilePath = Path.Combine(LogFileDir, $"log-{DateTime.Today:yyyy-MM-dd}.txt");
                         }
                     }
                 }
@@ -320,7 +323,8 @@ namespace CP_AI_Monitor
         {
             try
             {
-                string content = $"LogFile={LogFilePath}";
+                string directoryPath = Path.GetDirectoryName(LogFilePath) ?? string.Empty;
+                string content = $"LogDirectory={directoryPath}";
                 File.WriteAllText("config.cfg", content);
             }
             catch (Exception ex)
@@ -331,15 +335,18 @@ namespace CP_AI_Monitor
 
         private void EditLogFilePath()
         {
-            string newPath = textBoxLogFile.Text;
+            string newDirectoryPath = textBoxLogDir.Text ?? string.Empty; // Provide a default empty string value if textBoxLogDir.Text is null
+            string logFileName = $"log-{DateTime.Today:yyyy-MM-dd}.txt";
+            string newPath = Path.Combine(newDirectoryPath, logFileName);
 
             if (!ValidateLogFilePath(newPath))
             {
-                MessageBox.Show("The new log file path is invalid. Please provide a valid path.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("The new log directory path is invalid. Please provide a valid path.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             LogFilePath = newPath;
+            LogFileDir = newDirectoryPath;
             SaveConfig();
             UpdateLogFileDisplay();
         }

@@ -46,6 +46,7 @@
             textBoxServiceStatus = new TextBox();
             textBoxStatus = new TextBox();
             btnSave = new Button();
+            textBoxLogDir = new TextBox();
             contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)fileSystemWatcher1).BeginInit();
             SuspendLayout();
@@ -134,7 +135,7 @@
             // lblLogFileExists
             // 
             lblLogFileExists.AutoSize = true;
-            lblLogFileExists.Location = new Point(12, 162);
+            lblLogFileExists.Location = new Point(274, 118);
             lblLogFileExists.Name = "lblLogFileExists";
             lblLogFileExists.Size = new Size(83, 15);
             lblLogFileExists.TabIndex = 6;
@@ -165,7 +166,6 @@
             textBoxServiceStatus.ReadOnly = true;
             textBoxServiceStatus.Size = new Size(345, 23);
             textBoxServiceStatus.TabIndex = 9;
-            textBoxServiceStatus.Text = "Box Service Status";
             // 
             // textBoxStatus
             // 
@@ -179,7 +179,7 @@
             // 
             // btnSave
             // 
-            btnSave.Location = new Point(363, 135);
+            btnSave.Location = new Point(363, 164);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(38, 23);
             btnSave.TabIndex = 11;
@@ -187,11 +187,19 @@
             btnSave.UseVisualStyleBackColor = true;
             btnSave.Click += btnSave_Click;
             // 
+            // textBoxLogDir
+            // 
+            textBoxLogDir.Location = new Point(12, 165);
+            textBoxLogDir.Name = "textBoxLogDir";
+            textBoxLogDir.Size = new Size(345, 23);
+            textBoxLogDir.TabIndex = 12;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(textBoxLogDir);
             Controls.Add(btnSave);
             Controls.Add(textBoxStatus);
             Controls.Add(textBoxServiceStatus);
@@ -232,5 +240,6 @@
         private ContextMenuStrip contextMenuStrip1;
         private ToolStripMenuItem maximizeToolStripMenuItem;
         private ToolStripMenuItem exitToolStripMenuItem;
+        private TextBox textBoxLogDir;
     }
 }
