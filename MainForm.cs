@@ -3,6 +3,7 @@ using System.IO;
 using System.ServiceProcess;
 using System.Threading;
 using System.Runtime.InteropServices;
+using System.Reflection;
 
 namespace CP_AI_Monitor
 {
@@ -56,6 +57,9 @@ namespace CP_AI_Monitor
         {
             LoadConfig();
 
+            lblErrorsDetected.Text = $"Errors detected: {errorsDetected}";
+            lblAutoRestarts.Text = $"Auto restarts: {autoRestartsPerformed}";
+
             if (!ValidateLogFilePath(LogFilePath))
             {
                 return;
@@ -83,6 +87,9 @@ namespace CP_AI_Monitor
 
             // Update the log file status
             UpdateLogFileDisplay();
+
+            // Start the service if it's stopped
+            StartServiceIfStopped();
 
             // Hide the form
             this.Hide();
@@ -228,7 +235,9 @@ namespace CP_AI_Monitor
 
         private void UpdateStatusDisplay(string message)
         {
-            textBoxStatus.AppendText($"{DateTime.Now}: {message}\r\n");
+            string logMessage = $"{DateTime.Now}: {message}\r\n";
+            textBoxStatus.AppendText(logMessage);
+            SaveStatusToFile(); // Save the updated status log to the file
         }
 
         private void SaveLastProcessedLine()
@@ -330,5 +339,59 @@ namespace CP_AI_Monitor
         {
             EditLogFilePath();
         }
+
+        private async void StartServiceIfStopped()
+        {
+            using ServiceController service = new ServiceController(ServiceName);
+            if (service.Status == ServiceControllerStatus.Stopped)
+            {
+                UpdateStatusDisplay("Starting service...");
+                UpdateServiceStatus();
+                try
+                {
+                    service.Start();
+                    await WaitForServiceStatusAsync(service, ServiceControllerStatus.Running, TimeSpan.FromSeconds(30));
+                    UpdateStatusDisplay("Service started.");
+                    UpdateServiceStatus();
+                }
+                catch (Exception ex)
+                {
+                    UpdateStatusDisplay($"Error while starting service: {ex.Message}");
+                    UpdateServiceStatus();
+                }
+            }
+        }
+
+        private async Task WaitForServiceStatusAsync(ServiceController service, ServiceControllerStatus status, TimeSpan timeout)
+        {
+            DateTime startTime = DateTime.UtcNow;
+
+            while (service.Status != status)
+            {
+                if (DateTime.UtcNow - startTime > timeout)
+                {
+                    throw new System.TimeoutException($"Timed out waiting for service '{service.ServiceName}' to reach status '{status}'.");
+                }
+
+                await Task.Delay(500);
+                service.Refresh();
+            }
+        }
+
+        private void SaveStatusToFile()
+        {
+            string appPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
+            string statusLogFilePath = Path.Combine(appPath, "CP-AI_Monitor.log");
+
+            try
+            {
+                File.WriteAllText(statusLogFilePath, textBoxStatus.Text);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error saving status log to file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
     }
 }
