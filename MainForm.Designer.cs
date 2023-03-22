@@ -31,36 +31,26 @@
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             notifyIcon1 = new NotifyIcon(components);
-            contextMenuStrip1 = new ContextMenuStrip(components);
-            exitToolStripMenuItem = new ToolStripMenuItem();
             fileSystemWatcher1 = new FileSystemWatcher();
             btnRestartService = new Button();
             lblServiceStatus = new Label();
             lblErrorsDetected = new Label();
             lblAutoRestarts = new Label();
-            contextMenuStrip1.SuspendLayout();
+            lblLogFile = new Label();
+            lblLogFileExists = new Label();
+            textBoxLogFile = new TextBox();
+            btnExit = new Button();
+            textBoxServiceStatus = new TextBox();
+            textBoxStatus = new TextBox();
+            btnSave = new Button();
             ((System.ComponentModel.ISupportInitialize)fileSystemWatcher1).BeginInit();
             SuspendLayout();
             // 
             // notifyIcon1
             // 
-            notifyIcon1.ContextMenuStrip = contextMenuStrip1;
             notifyIcon1.Icon = (Icon)resources.GetObject("notifyIcon1.Icon");
             notifyIcon1.Text = "notifyEYE";
             notifyIcon1.Visible = true;
-            // 
-            // contextMenuStrip1
-            // 
-            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { exitToolStripMenuItem });
-            contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(94, 26);
-            // 
-            // exitToolStripMenuItem
-            // 
-            exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new Size(93, 22);
-            exitToolStripMenuItem.Text = "Exit";
-            exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 
             // fileSystemWatcher1
             // 
@@ -81,7 +71,7 @@
             // lblServiceStatus
             // 
             lblServiceStatus.AutoSize = true;
-            lblServiceStatus.Location = new Point(12, 9);
+            lblServiceStatus.Location = new Point(12, 33);
             lblServiceStatus.Name = "lblServiceStatus";
             lblServiceStatus.Size = new Size(79, 15);
             lblServiceStatus.TabIndex = 2;
@@ -90,7 +80,7 @@
             // lblErrorsDetected
             // 
             lblErrorsDetected.AutoSize = true;
-            lblErrorsDetected.Location = new Point(12, 90);
+            lblErrorsDetected.Location = new Point(12, 9);
             lblErrorsDetected.Name = "lblErrorsDetected";
             lblErrorsDetected.Size = new Size(87, 15);
             lblErrorsDetected.TabIndex = 3;
@@ -99,28 +89,98 @@
             // lblAutoRestarts
             // 
             lblAutoRestarts.AutoSize = true;
-            lblAutoRestarts.Location = new Point(12, 177);
+            lblAutoRestarts.Location = new Point(12, 88);
             lblAutoRestarts.Name = "lblAutoRestarts";
             lblAutoRestarts.RightToLeft = RightToLeft.Yes;
             lblAutoRestarts.Size = new Size(77, 15);
             lblAutoRestarts.TabIndex = 4;
             lblAutoRestarts.Text = "Auto Restarts";
             // 
+            // lblLogFile
+            // 
+            lblLogFile.AutoSize = true;
+            lblLogFile.Location = new Point(12, 118);
+            lblLogFile.Name = "lblLogFile";
+            lblLogFile.Size = new Size(94, 15);
+            lblLogFile.TabIndex = 5;
+            lblLogFile.Text = "Current Log File:";
+            // 
+            // lblLogFileExists
+            // 
+            lblLogFileExists.AutoSize = true;
+            lblLogFileExists.Location = new Point(12, 162);
+            lblLogFileExists.Name = "lblLogFileExists";
+            lblLogFileExists.Size = new Size(83, 15);
+            lblLogFileExists.TabIndex = 6;
+            lblLogFileExists.Text = "Log File Exists:";
+            // 
+            // textBoxLogFile
+            // 
+            textBoxLogFile.Location = new Point(12, 136);
+            textBoxLogFile.Name = "textBoxLogFile";
+            textBoxLogFile.ReadOnly = true;
+            textBoxLogFile.Size = new Size(345, 23);
+            textBoxLogFile.TabIndex = 7;
+            // 
+            // btnExit
+            // 
+            btnExit.Location = new Point(125, 415);
+            btnExit.Name = "btnExit";
+            btnExit.Size = new Size(75, 23);
+            btnExit.TabIndex = 8;
+            btnExit.Text = "Exit";
+            btnExit.UseVisualStyleBackColor = true;
+            btnExit.Click += btnExit_Click;
+            // 
+            // textBoxServiceStatus
+            // 
+            textBoxServiceStatus.Location = new Point(12, 51);
+            textBoxServiceStatus.Name = "textBoxServiceStatus";
+            textBoxServiceStatus.ReadOnly = true;
+            textBoxServiceStatus.Size = new Size(345, 23);
+            textBoxServiceStatus.TabIndex = 9;
+            textBoxServiceStatus.Text = "Box Service Status";
+            // 
+            // textBoxStatus
+            // 
+            textBoxStatus.Location = new Point(12, 219);
+            textBoxStatus.Multiline = true;
+            textBoxStatus.Name = "textBoxStatus";
+            textBoxStatus.ReadOnly = true;
+            textBoxStatus.ScrollBars = ScrollBars.Vertical;
+            textBoxStatus.Size = new Size(776, 190);
+            textBoxStatus.TabIndex = 10;
+            // 
+            // btnSave
+            // 
+            btnSave.Location = new Point(363, 135);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(38, 23);
+            btnSave.TabIndex = 11;
+            btnSave.Text = "save";
+            btnSave.UseVisualStyleBackColor = true;
+            btnSave.Click += btnSave_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(btnSave);
+            Controls.Add(textBoxStatus);
+            Controls.Add(textBoxServiceStatus);
+            Controls.Add(btnExit);
+            Controls.Add(textBoxLogFile);
+            Controls.Add(lblLogFileExists);
+            Controls.Add(lblLogFile);
             Controls.Add(lblAutoRestarts);
             Controls.Add(lblErrorsDetected);
             Controls.Add(lblServiceStatus);
             Controls.Add(btnRestartService);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             Name = "MainForm";
-            ShowInTaskbar = false;
-            Text = "Form1";
-            WindowState = FormWindowState.Minimized;
+            Text = "CP-AI Monitor";
             Load += MainForm_Load;
-            contextMenuStrip1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)fileSystemWatcher1).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -129,12 +189,17 @@
         #endregion
 
         private NotifyIcon notifyIcon1;
-        private ContextMenuStrip contextMenuStrip1;
-        private ToolStripMenuItem exitToolStripMenuItem;
         private FileSystemWatcher fileSystemWatcher1;
         private Label lblAutoRestarts;
         private Label lblErrorsDetected;
         private Label lblServiceStatus;
         private Button btnRestartService;
+        private TextBox textBoxLogFile;
+        private Label lblLogFileExists;
+        private Label lblLogFile;
+        private Button btnExit;
+        private TextBox textBoxServiceStatus;
+        private TextBox textBoxStatus;
+        private Button btnSave;
     }
 }
