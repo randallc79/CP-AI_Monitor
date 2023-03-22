@@ -230,7 +230,7 @@ namespace CP_AI_Monitor
             textBoxLogFile.Text = LogFilePath;
             textBoxLogDir.Text = LogFileDir;
 
-        bool logFileExists = File.Exists(LogFilePath);
+            bool logFileExists = File.Exists(LogFilePath);
             lblLogFileExists.Text = $"Log File Exists: {logFileExists}";
         }
 
@@ -301,10 +301,10 @@ namespace CP_AI_Monitor
                     string[] configLines = File.ReadAllLines("config.cfg");
                     foreach (string line in configLines)
                     {
-                        if (line.StartsWith("LogDirectory="))
+                        if (line.StartsWith("LogFile="))
                         {
-                            LogFileDir = line.Substring("LogDirectory=".Length);
-                            LogFilePath = Path.Combine(LogFileDir, $"log-{DateTime.Today:yyyy-MM-dd}.txt");
+                            LogFileDir = line.Substring("LogFile=".Length);
+                            LogFilePath = string.Format(LogFileDir, DateTime.Today);
                         }
                     }
                 }

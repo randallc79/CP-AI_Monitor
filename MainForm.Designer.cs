@@ -135,7 +135,7 @@
             // lblLogFileExists
             // 
             lblLogFileExists.AutoSize = true;
-            lblLogFileExists.Location = new Point(274, 118);
+            lblLogFileExists.Location = new Point(363, 139);
             lblLogFileExists.Name = "lblLogFileExists";
             lblLogFileExists.Size = new Size(83, 15);
             lblLogFileExists.TabIndex = 6;
