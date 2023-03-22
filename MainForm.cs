@@ -4,6 +4,9 @@ using System.ServiceProcess;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CP_AI_Monitor
 {
@@ -25,6 +28,7 @@ namespace CP_AI_Monitor
         public MainForm()
         {
             InitializeComponent();
+            this.Resize += MainForm_Resize;
         }
 
         private bool ValidateLogFilePath(string path)
@@ -59,6 +63,7 @@ namespace CP_AI_Monitor
 
             lblErrorsDetected.Text = $"Errors detected: {errorsDetected}";
             lblAutoRestarts.Text = $"Auto restarts: {autoRestartsPerformed}";
+            notifyIcon1.Visible = false;
 
             if (!ValidateLogFilePath(LogFilePath))
             {
@@ -72,10 +77,11 @@ namespace CP_AI_Monitor
             watcher = new FileSystemWatcher
             {
                 Path = directoryPath,
-                Filter = fileName,
-                NotifyFilter = NotifyFilters.LastWrite
+                Filter = "*.txt", // Monitor all .txt files in the directory
+                NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite
             };
 
+            watcher.Created += OnNewLogFile; // Add a new event handler for file creation
             watcher.Changed += OnChanged;
             watcher.EnableRaisingEvents = true;
 
@@ -91,8 +97,6 @@ namespace CP_AI_Monitor
             // Start the service if it's stopped
             StartServiceIfStopped();
 
-            // Hide the form
-            this.Hide();
         }
 
         private void fileSystemWatcher1_Changed(object sender, FileSystemEventArgs e)
@@ -128,23 +132,28 @@ namespace CP_AI_Monitor
 
             try
             {
-                string[] lines = File.ReadAllLines(LogFilePath);
-                for (int i = lines.Length - 1; i > lastProcessedLine; i--)
+                using (var streamReader = new StreamReader(LogFilePath))
                 {
-                    if (lines[i].Contains(ErrorString))
+                    string line;
+                    int lineCount = 0;
+                    while ((line = streamReader.ReadLine()) != null)
                     {
-                        errorsDetected++;
-                        lblErrorsDetected.Text = $"Errors detected: {errorsDetected}";
+                        if (lineCount > lastProcessedLine && line.Contains(ErrorString))
+                        {
+                            errorsDetected++;
+                            lblErrorsDetected.Text = $"Errors detected: {errorsDetected}";
 
-                        UpdateStatusDisplay($"Error '{ErrorString}' detected. Restarting service...");
-                        await RestartService(ServiceName, ServiceRestartDelay);
+                            UpdateStatusDisplay($"Error '{ErrorString}' detected. Restarting service...");
+                            await RestartService(ServiceName, ServiceRestartDelay);
 
-                        autoRestartsPerformed++;
-                        lblAutoRestarts.Text = $"Automatic restarts: {autoRestartsPerformed}";
+                            autoRestartsPerformed++;
+                            lblAutoRestarts.Text = $"Automatic restarts: {autoRestartsPerformed}";
 
-                        lastProcessedLine = i;
-                        SaveLastProcessedLine();
-                        break;
+                            lastProcessedLine = lineCount;
+                            SaveLastProcessedLine();
+                        }
+
+                        lineCount++;
                     }
                 }
             }
@@ -393,5 +402,50 @@ namespace CP_AI_Monitor
             }
         }
 
+        private void OnNewLogFile(object sender, FileSystemEventArgs e)
+        {
+            string directoryPath = Path.GetDirectoryName(LogFilePath) ?? string.Empty;
+            if (IsLogFile(e.Name ?? string.Empty)) // Pass an empty string if e.Name is null
+            {
+                LogFilePath = Path.Combine(directoryPath, e.Name ?? string.Empty); // Pass an empty string if e.Name is null
+                lastProcessedLine = -1;
+                UpdateLogFileDisplay();
+            }
+        }
+
+        private bool IsLogFile(string fileName)
+        {
+            // Adjust the regex pattern to match your log file naming convention
+            var logFilePattern = @"^log-\d{4}-\d{2}-\d{2}\.txt$";
+            return Regex.IsMatch(fileName, logFilePattern);
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void MainForm_Resize(object sender, [NotNull] EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Minimized)
+            {
+                this.Hide();
+                notifyIcon1.Visible = true;
+            }
+        }
+
+        private void maximizeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Show();
+            this.WindowState = FormWindowState.Normal;
+            notifyIcon1.Visible = false;
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            this.Show();
+            this.WindowState = FormWindowState.Normal;
+            notifyIcon1.Visible = false;
+        }
     }
 }

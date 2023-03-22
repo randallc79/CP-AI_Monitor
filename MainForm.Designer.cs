@@ -31,6 +31,9 @@
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             notifyIcon1 = new NotifyIcon(components);
+            contextMenuStrip1 = new ContextMenuStrip(components);
+            maximizeToolStripMenuItem = new ToolStripMenuItem();
+            exitToolStripMenuItem = new ToolStripMenuItem();
             fileSystemWatcher1 = new FileSystemWatcher();
             btnRestartService = new Button();
             lblServiceStatus = new Label();
@@ -43,14 +46,37 @@
             textBoxServiceStatus = new TextBox();
             textBoxStatus = new TextBox();
             btnSave = new Button();
+            contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)fileSystemWatcher1).BeginInit();
             SuspendLayout();
             // 
             // notifyIcon1
             // 
+            notifyIcon1.ContextMenuStrip = contextMenuStrip1;
             notifyIcon1.Icon = (Icon)resources.GetObject("notifyIcon1.Icon");
-            notifyIcon1.Text = "notifyEYE";
+            notifyIcon1.Text = "CP-AI Monitor";
             notifyIcon1.Visible = true;
+            notifyIcon1.MouseDoubleClick += notifyIcon1_MouseDoubleClick;
+            // 
+            // contextMenuStrip1
+            // 
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { maximizeToolStripMenuItem, exitToolStripMenuItem });
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.Size = new Size(126, 48);
+            // 
+            // maximizeToolStripMenuItem
+            // 
+            maximizeToolStripMenuItem.Name = "maximizeToolStripMenuItem";
+            maximizeToolStripMenuItem.Size = new Size(125, 22);
+            maximizeToolStripMenuItem.Text = "Maximize";
+            maximizeToolStripMenuItem.Click += maximizeToolStripMenuItem_Click;
+            // 
+            // exitToolStripMenuItem
+            // 
+            exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            exitToolStripMenuItem.Size = new Size(125, 22);
+            exitToolStripMenuItem.Text = "Exit";
+            exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 
             // fileSystemWatcher1
             // 
@@ -178,9 +204,11 @@
             Controls.Add(lblServiceStatus);
             Controls.Add(btnRestartService);
             FormBorderStyle = FormBorderStyle.FixedSingle;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "MainForm";
             Text = "CP-AI Monitor";
             Load += MainForm_Load;
+            contextMenuStrip1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)fileSystemWatcher1).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -201,5 +229,8 @@
         private TextBox textBoxServiceStatus;
         private TextBox textBoxStatus;
         private Button btnSave;
+        private ContextMenuStrip contextMenuStrip1;
+        private ToolStripMenuItem maximizeToolStripMenuItem;
+        private ToolStripMenuItem exitToolStripMenuItem;
     }
 }
