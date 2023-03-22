@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "lSyZ8PSpKDQkSXADqhtnnvrCfHpmnNb80BJSlt+6cfddrbqhZTcuca5Hhy6zKSt6Bv19IKXTDjwf8EQIoySsaw==",
+  "success": true,
+  "projectFilePath": "D:\\gitrepos\\CP-AI_Monitor\\CP-AI_Monitor.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\madcat\\.nuget\\packages\\system.diagnostics.eventlog\\7.0.0\\system.diagnostics.eventlog.7.0.0.nupkg.sha512",
+    "C:\\Users\\madcat\\.nuget\\packages\\system.serviceprocess.servicecontroller\\7.0.0\\system.serviceprocess.servicecontroller.7.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
